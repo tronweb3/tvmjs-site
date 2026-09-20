@@ -5,13 +5,13 @@ The site is built as static files, published by GitHub Pages, and served to user
 origin; the public URL belongs to nginx.
 
 ```
-browser ── https://walletadapter.org/tvmjs/… ──▶ nginx ──▶ https://<owner>.github.io/<repo>/…
+browser ── https://walletadapter.org/tvmjs/… ──▶ nginx ──▶ https://tronweb3.github.io/tvmjs-site/…
 ```
 
 ## 1. Build with the public base path
 
 The base path is baked into every asset URL at build time, so it must be the **public** one
-(`/tvmjs`), not the path GitHub Pages serves the files under (`/<repo>`).
+(`/tvmjs`), not the path GitHub Pages serves the files under (`/tvmjs-site`).
 
 ```bash
 BASE_PATH=/tvmjs SITE_URL=https://walletadapter.org/tvmjs pnpm build
@@ -33,12 +33,12 @@ bundles them; nothing is fetched from Google by visitors.
 - Enforce HTTPS: on.
 
 Files are served from the artifact root, so `dist/roadmap.html` is
-`https://<owner>.github.io/<repo>/roadmap.html`. For a user or organisation site
-(`<owner>.github.io` repository) the `<repo>/` segment is absent.
+`https://tronweb3.github.io/tvmjs-site/roadmap.html`. If the repository is renamed or moved
+to another owner, update the `proxy_pass`, `Host` and `proxy_redirect` values below.
 
 ## 3. nginx
 
-Adjust `<owner>` and `<repo>`. This block belongs inside the `server` for `walletadapter.org`.
+This block belongs inside the `server` for `walletadapter.org`.
 
 ```nginx
 # Requests for /tvmjs (no slash) go to the site root.
@@ -47,17 +47,17 @@ location = /tvmjs {
 }
 
 location /tvmjs/ {
-    # The trailing slash on proxy_pass replaces the /tvmjs/ prefix with /<repo>/.
-    proxy_pass https://<owner>.github.io/<repo>/;
+    # The trailing slash on proxy_pass replaces the /tvmjs/ prefix with /tvmjs-site/.
+    proxy_pass https://tronweb3.github.io/tvmjs-site/;
 
-    proxy_ssl_server_name on;                 # SNI, required by GitHub Pages
-    proxy_set_header Host <owner>.github.io;  # Pages routes by Host header
-    proxy_set_header Accept-Encoding "";      # let nginx do its own compression
+    proxy_ssl_server_name on;                  # SNI, required by GitHub Pages
+    proxy_set_header Host tronweb3.github.io;  # Pages routes by Host header
+    proxy_set_header Accept-Encoding "";       # let nginx do its own compression
 
     # GitHub answers a directory without a trailing slash (/tvmjs/docs) with an absolute
     # 301 to github.io. Rewrite it so the visitor stays on walletadapter.org.
-    proxy_redirect https://<owner>.github.io/<repo>/ /tvmjs/;
-    proxy_redirect http://<owner>.github.io/<repo>/ /tvmjs/;
+    proxy_redirect https://tronweb3.github.io/tvmjs-site/ /tvmjs/;
+    proxy_redirect http://tronweb3.github.io/tvmjs-site/ /tvmjs/;
 
     # Only the request methods a static site needs.
     limit_except GET HEAD { deny all; }
@@ -86,9 +86,9 @@ location /tvmjs/ {
 }
 
 location /tvmjs/_next/static/ {
-    proxy_pass https://<owner>.github.io/<repo>/_next/static/;
+    proxy_pass https://tronweb3.github.io/tvmjs-site/_next/static/;
     proxy_ssl_server_name on;
-    proxy_set_header Host <owner>.github.io;
+    proxy_set_header Host tronweb3.github.io;
     proxy_hide_header Server;
 
     add_header Cache-Control "public, max-age=31536000, immutable" always;
@@ -117,7 +117,7 @@ curl -s  https://walletadapter.org/tvmjs/ | grep -o '/tvmjs/_next/static/[^"]*' 
 curl -sI https://walletadapter.org/tvmjs/_next/static/media/  # served through the proxy
 ```
 
-- The page must reference `/tvmjs/_next/...`, never `/<repo>/...` or `github.io`.
+- The page must reference `/tvmjs/_next/...`, never `/tvmjs-site/...` or `github.io`.
 - `curl -sI` responses must contain no `x-github-request-id` or `server: GitHub.com`.
 - View the page's `<link rel="canonical">`: it must be `https://walletadapter.org/tvmjs`.
 
