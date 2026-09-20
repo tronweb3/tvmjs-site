@@ -3,7 +3,7 @@
  * A nav link that escapes VitePress's `base`.
  *
  * VitePress prefixes any nav `link` starting with `/` with the site base, so
- * `/tvmjs/` would resolve to `/tvmjs/docs/tvmjs/`. This renders the href verbatim.
+ * `/tvmjs-site/` would resolve to `/tvmjs-site/docs/tvmjs-site/`. This renders the href verbatim.
  *
  * Deliberately no click handler: the href alone navigates, and adding one would break
  * cmd/ctrl-click and middle-click into a new tab.

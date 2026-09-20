@@ -25,7 +25,7 @@ if (fs.existsSync(envFile)) {
  * three must agree or the dev proxy routes to the wrong server.
  */
 export function resolveBasePath() {
-  const raw = process.env.BASE_PATH ?? '/tvmjs';
+  const raw = process.env.BASE_PATH ?? '/tvmjs-site';
   const basePath = raw === '/' ? '' : raw.replace(/\/+$/, '');
   if (basePath && !basePath.startsWith('/')) {
     throw new Error(`BASE_PATH must start with "/" or be empty, received: ${JSON.stringify(raw)}`);

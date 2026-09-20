@@ -28,8 +28,8 @@ pnpm dev
 docs behave exactly as they will in production:
 
 ```
-http://localhost:3100/tvmjs/        → site  (Next.js   :3103)
-http://localhost:3100/tvmjs/docs/   → docs  (VitePress :3104)
+http://localhost:3100/tvmjs-site/        → site  (Next.js   :3103)
+http://localhost:3100/tvmjs-site/docs/   → docs  (VitePress :3104)
 ```
 
 Running a single app on its own port also works — `pnpm dev:site` or `pnpm dev:docs` — but
@@ -60,10 +60,10 @@ Everything deployment-specific is an environment variable with a default that re
 the current deployment, so a clean clone builds without any configuration. Copy
 `.env.example` to `.env` to change them locally.
 
-| Variable            | Default   | Effect                                                    |
-| ------------------- | --------- | --------------------------------------------------------- |
-| `BASE_PATH`         | `/tvmjs`  | Where the site is mounted. Empty means the origin root    |
-| `NEXT_PUBLIC_GA_ID` | _(empty)_ | Google Analytics measurement ID. Empty ships no analytics |
+| Variable            | Default       | Effect                                                    |
+| ------------------- | ------------- | --------------------------------------------------------- |
+| `BASE_PATH`         | `/tvmjs-site` | Where the site is mounted. Empty means the origin root    |
+| `NEXT_PUBLIC_GA_ID` | _(empty)_     | Google Analytics measurement ID. Empty ships no analytics |
 
 `BASE_PATH` drives the Next.js `basePath`, the VitePress `base` (always `${BASE_PATH}/docs/`),
 the dev proxy's routing and the preview server at once. To serve the whole thing from a
@@ -73,7 +73,7 @@ domain root:
 BASE_PATH= SITE_URL=https://example.org pnpm build
 ```
 
-Note that `dist/` never contains a `tvmjs/` directory of its own — the prefix lives in the
+Note that `dist/` never contains a `tvmjs-site/` directory of its own — the prefix lives in the
 URLs inside the pages, and the directory is mounted _at_ `BASE_PATH`.
 
 ### Analytics
