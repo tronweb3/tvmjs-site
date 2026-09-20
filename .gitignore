@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Lockfiles from other package managers — this repo uses pnpm
+package-lock.json
+yarn.lock
+
+# Build output
+.next/
+out/
+dist/
+build/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+*.tsbuildinfo
+
+# Next.js generates this on every build
+site/next-env.d.ts
+
+# Test output
+coverage/
+test-results/
+
+# Environment — never commit real values, see .env.example
+.env
+.env.*
+!.env.example
+
+# Editors and OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*

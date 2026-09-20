@@ -1,0 +1,57 @@
+{
+  "name": "tvmjs-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website and developer documentation for TVMJS, the TRON Virtual Machine implemented in TypeScript",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tronweb3/tvmjs-site.git"
+  },
+  "homepage": "https://github.com/tronweb3/tvmjs-site#readme",
+  "bugs": {
+    "url": "https://github.com/tronweb3/tvmjs-site/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:site": "pnpm --filter tvmjs-site dev",
+    "dev:docs": "pnpm --filter tvmjs-docs dev",
+    "build": "node scripts/build.mjs",
+    "build:site": "pnpm --filter tvmjs-site build",
+    "build:docs": "pnpm --filter tvmjs-docs build",
+    "preview": "node scripts/preview.mjs",
+    "clean": "rm -rf dist coverage site/out site/.next docs/.vitepress/dist docs/.vitepress/cache",
+    "nuke": "rm -rf node_modules site/node_modules docs/node_modules",
+    "lint": "eslint . && pnpm --filter tvmjs-site lint",
+    "typecheck": "tsc --noEmit && pnpm --recursive typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:integration": "vitest run --project integration",
+    "test:all": "vitest run",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.4",
+    "@types/node": "20.19.37",
+    "eslint": "9.39.4",
+    "globals": "15.14.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.1.2",
+    "prettier": "3.4.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "4.1.11"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,tsx,vue,json,css,md,yml,yaml}": "prettier --write"
+  },
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=11.0.0"
+  }
+}

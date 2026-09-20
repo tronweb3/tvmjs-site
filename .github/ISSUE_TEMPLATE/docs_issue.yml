@@ -1,0 +1,28 @@
+name: Documentation problem
+description: Something in the docs is wrong, unclear or missing
+labels: ['documentation']
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      placeholder: docs/tron/energy.md
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing
+      description: Quote the passage if it is an inaccuracy.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What it should say
+      description: Optional, but the fastest path to a fix.
+  - type: input
+    id: version
+    attributes:
+      label: TVMJS version the docs disagree with
+      placeholder: 1.1.0

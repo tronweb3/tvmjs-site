@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: TVMJS library issues
+    url: https://github.com/tronweb3/tvmjs-monorepo/issues
+    about: Bugs in the TRON Virtual Machine itself — execution, energy, precompiles, addresses.
+  - name: Security report
+    url: https://github.com/tronweb3/tvmjs-site/security/advisories/new
+    about: Report a vulnerability privately. Please do not open a public issue.
