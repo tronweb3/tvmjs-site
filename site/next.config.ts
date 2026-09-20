@@ -4,7 +4,7 @@ import type { NextConfig } from 'next';
  * Where this app is mounted, and the public origin it is served from.
  *
  * Both are environment-driven so the same source can be deployed standalone (`BASE_PATH=`,
- * serving from `/`) or nested under another property (`BASE_PATH=/tvmjs`). The defaults
+ * serving from `/`) or nested under another property (`BASE_PATH=/tvmjs-site`). The defaults
  * reproduce the current walletadapter.org deployment, so an unconfigured build is the
  * deployment that exists today rather than a surprise.
  *
@@ -13,7 +13,7 @@ import type { NextConfig } from 'next';
  * of next/image or of a plain <img> in a static export, so those would otherwise resolve
  * against the parent site.
  */
-const rawBasePath = process.env.BASE_PATH ?? '/tvmjs';
+const rawBasePath = process.env.BASE_PATH ?? '/tvmjs-site';
 
 // Normalise: '' (root) or '/segment', never a trailing slash. `basePath: '/'` is rejected
 // by Next, and a trailing slash produces '//logo.png' in asset URLs.
@@ -23,7 +23,7 @@ if (BASE_PATH && !BASE_PATH.startsWith('/')) {
   throw new Error(`BASE_PATH must start with "/" or be empty, received: ${JSON.stringify(rawBasePath)}`);
 }
 
-const SITE_URL = (process.env.SITE_URL ?? 'https://walletadapter.org/tvmjs').replace(/\/+$/, '');
+const SITE_URL = (process.env.SITE_URL ?? 'https://walletadapter.org/tvmjs-site').replace(/\/+$/, '');
 
 const nextConfig: NextConfig = {
   // basePath also applies in `next dev`, so the local URL is

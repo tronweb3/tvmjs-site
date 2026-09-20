@@ -5,8 +5,8 @@
  *   dist/            ← site/out             (Next.js static export)
  *   dist/docs/       ← docs/.vitepress/dist (VitePress build)
  *
- * `dist/` is laid out to be served at BASE_PATH: with the default BASE_PATH=/tvmjs it is
- * uploaded to https://host/tvmjs/, with BASE_PATH= it is the origin root. The apps encode
+ * `dist/` is laid out to be served at BASE_PATH: with the default BASE_PATH=/tvmjs-site it is
+ * uploaded to https://host/tvmjs-site/, with BASE_PATH= it is the origin root. The apps encode
  * BASE_PATH in their own URLs, so the directory itself carries no prefix.
  */
 

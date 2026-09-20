@@ -16,7 +16,7 @@ body:
     attributes:
       label: Page
       description: The URL where you saw it, or the file path if it is a source problem.
-      placeholder: https://walletadapter.org/tvmjs/roadmap.html
+      placeholder: https://walletadapter.org/tvmjs-site/roadmap.html
     validations:
       required: true
   - type: textarea
