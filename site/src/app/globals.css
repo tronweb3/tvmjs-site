@@ -1,0 +1,143 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@config "../../tailwind.config.js";
+
+/* :root {
+    --background: #ffffff;
+    --foreground: #171717;
+} */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+/* @media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
+} */
+html {
+  background-color: rgba(248, 248, 248, 1);
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    var(--font-inter),
+    Inter,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Arial,
+    sans-serif;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .font-wix {
+    font-family: var(--font-wix), 'Wix Madefor Display', system-ui, sans-serif;
+  }
+  .font-body {
+    font-family:
+      var(--font-inter),
+      Inter,
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      Arial,
+      sans-serif;
+  }
+  .text-dark {
+    color: rgb(7, 9, 76);
+  }
+  .text-blue {
+    color: rgba(70, 67, 223, 1);
+  }
+
+  .text-section-title {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: var(--font-wix), 'Wix Madefor Display', system-ui, sans-serif;
+    line-height: 1;
+  }
+
+  .w-basic {
+    width: 1200px;
+  }
+  .max-w-1200 {
+    max-width: 1200px;
+  }
+  .hover\:animate-rotate {
+    transition: all 0.3s linear;
+  }
+  .hover\:animate-rotate:hover {
+    transform: rotate(180deg);
+  }
+  @media screen and (max-width: 768px) {
+    .w-basic {
+      width: 100vw;
+    }
+    .max-w-1200 {
+      max-width: 100vw;
+    }
+    .text-section-title {
+      font-size: 20px;
+    }
+  }
+}
+
+/* Top-nav background.
+   Painted as its own layer under the bar's content so its opacity can be animated
+   independently of the logo and menu. NavBar writes --nav-bg-opacity from the scroll
+   position on every frame, which fades the bar from fully transparent at the top of
+   the page to opaque once you have scrolled past --nav-fade-distance. The blur only
+   shows during the transition, while the layer is still translucent. */
+#nav-bar {
+  --nav-bg-opacity: 0;
+}
+
+#nav-bar .nav-bg {
+  position: absolute;
+  inset: 0;
+  opacity: var(--nav-bg-opacity);
+  background: #ffffff;
+  /* Only the standard property: the build autoprefixes it, and hand-writing the
+     -webkit- form here made lightningcss emit the prefixed one alone. */
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid rgba(7, 9, 76, 0.08);
+  pointer-events: none;
+}
+
+.blue-button {
+  background: rgba(70, 67, 223, 1);
+  box-shadow: 0px 14px 20px -10px rgba(70, 67, 223, 0.4);
+  transition: all 0.3s ease;
+  font-family: var(--font-wix), 'Wix Madefor Display', system-ui, sans-serif;
+}
+.blue-button.shadow-none {
+  box-shadow: none;
+}
+.blue-button:hover {
+  background: rgba(46, 43, 194, 1);
+}
+
+/* .expandable {
+    transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                    height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+} */
+
+/* Next.js rewrites links and next/image sources for basePath, but it does not touch
+   url() inside CSS — and a stylesheet cannot read the base path at build time. So the
+   complete url() value arrives as a custom property set on <body> in layout.tsx, where
+   assetPath() has already applied the prefix. Concatenating inside url() is not possible
+   in CSS, which is why the variable holds the whole url(...) and not just the path. */
+.bg-home {
+  background: var(--bg-home-image) no-repeat 0 100% / auto;
+}
+.bg-announcement {
+  background: var(--bg-announcement-image) no-repeat center top/auto;
+}

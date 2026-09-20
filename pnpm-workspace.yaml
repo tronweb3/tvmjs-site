@@ -1,0 +1,32 @@
+packages:
+  - 'site'
+  - 'docs'
+
+# pnpm 11 blocks dependency lifecycle scripts unless listed here, and `pnpm install`
+# exits 1 until every ignored package has an explicit decision. All false: the build
+# does not need any of these — esbuild and unrs-resolver ship prebuilt binaries, and
+# the rest only print funding notices.
+allowBuilds:
+  core-js: false
+  esbuild: false
+  unrs-resolver: false
+  sharp: false
+
+# Security overrides. pnpm >= 11 no longer reads `pnpm.overrides` from package.json;
+# this is the supported location. See https://pnpm.io/settings
+#
+# Each entry pins a transitive dependency past a published advisory. Re-check with
+# `pnpm audit` and drop an entry once the direct dependency ships the fix itself.
+overrides:
+  # VitePress 1.6.3 declares vite ^5.4.14, and Vite 5 pins esbuild 0.21, which carries
+  # open advisories. Vite 7 is the highest major VitePress 1.x still builds cleanly on:
+  # it pulls a patched esbuild 0.25+ and is still Rollup-based, whereas Vite 8 switches
+  # to Rolldown and floods the docs build with plugin-compatibility warnings.
+  vite: '7.3.6'
+
+  # VitePress 1.6.3 bundles its own markdown-it typings, while vitepress-plugin-group-icons
+  # types its plugin against @types/markdown-it. 14.2.0 added `utils.isPunctCharCode`, which
+  # the bundled copy does not have, so the two MarkdownIt types stopped being assignable and
+  # `md.use(groupIconMdPlugin)` fails to typecheck. Pinned to the last compatible release;
+  # drop this once VitePress ships typings built against markdown-it 14.2.
+  '@types/markdown-it': '14.1.2'

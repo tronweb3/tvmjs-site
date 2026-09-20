@@ -1,0 +1,125 @@
+# Deployment
+
+The site is built as static files, published by GitHub Pages, and served to users at
+`https://walletadapter.org/tvmjs/` through an nginx reverse proxy. GitHub Pages is only the
+origin; the public URL belongs to nginx.
+
+```
+browser ── https://walletadapter.org/tvmjs/… ──▶ nginx ──▶ https://<owner>.github.io/<repo>/…
+```
+
+## 1. Build with the public base path
+
+The base path is baked into every asset URL at build time, so it must be the **public** one
+(`/tvmjs`), not the path GitHub Pages serves the files under (`/<repo>`).
+
+```bash
+BASE_PATH=/tvmjs SITE_URL=https://walletadapter.org/tvmjs pnpm build
+```
+
+The deploy workflow must pass exactly these two values. Do not derive them from
+`actions/configure-pages` outputs: those describe the `github.io` address, and a build made
+from them 404s every asset behind the proxy and points canonical and Open Graph URLs at
+`github.io`.
+
+The build downloads Inter and Wix Madefor Display from Google Fonts once (`next/font`) and
+bundles them; nothing is fetched from Google by visitors.
+
+## 2. GitHub Pages settings
+
+- Source: **GitHub Actions**.
+- Custom domain: **leave empty**. The domain is handled by nginx, and setting it here makes
+  GitHub redirect `github.io` requests to a path on that domain.
+- Enforce HTTPS: on.
+
+Files are served from the artifact root, so `dist/roadmap.html` is
+`https://<owner>.github.io/<repo>/roadmap.html`. For a user or organisation site
+(`<owner>.github.io` repository) the `<repo>/` segment is absent.
+
+## 3. nginx
+
+Adjust `<owner>` and `<repo>`. This block belongs inside the `server` for `walletadapter.org`.
+
+```nginx
+# Requests for /tvmjs (no slash) go to the site root.
+location = /tvmjs {
+    return 301 /tvmjs/;
+}
+
+location /tvmjs/ {
+    # The trailing slash on proxy_pass replaces the /tvmjs/ prefix with /<repo>/.
+    proxy_pass https://<owner>.github.io/<repo>/;
+
+    proxy_ssl_server_name on;                 # SNI, required by GitHub Pages
+    proxy_set_header Host <owner>.github.io;  # Pages routes by Host header
+    proxy_set_header Accept-Encoding "";      # let nginx do its own compression
+
+    # GitHub answers a directory without a trailing slash (/tvmjs/docs) with an absolute
+    # 301 to github.io. Rewrite it so the visitor stays on walletadapter.org.
+    proxy_redirect https://<owner>.github.io/<repo>/ /tvmjs/;
+    proxy_redirect http://<owner>.github.io/<repo>/ /tvmjs/;
+
+    # Only the request methods a static site needs.
+    limit_except GET HEAD { deny all; }
+
+    # Drop GitHub's own headers; the set below is the source of truth.
+    proxy_hide_header X-GitHub-Request-Id;
+    proxy_hide_header X-Served-By;
+    proxy_hide_header X-Cache;
+    proxy_hide_header X-Cache-Hits;
+    proxy_hide_header X-Timer;
+    proxy_hide_header Server;
+
+    # A static export cannot emit response headers, so set them here. add_header inside a
+    # location replaces every add_header inherited from the server block, so repeat any
+    # you rely on there.
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Content-Security-Policy "frame-ancestors 'none'" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Short cache for pages, long for content-hashed assets.
+    proxy_cache_valid 200 10m;
+}
+
+location /tvmjs/_next/static/ {
+    proxy_pass https://<owner>.github.io/<repo>/_next/static/;
+    proxy_ssl_server_name on;
+    proxy_set_header Host <owner>.github.io;
+    proxy_hide_header Server;
+
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+    add_header X-Content-Type-Options "nosniff" always;
+}
+```
+
+Notes:
+
+- **HSTS scope.** `includeSubDomains` applies to all of `walletadapter.org`, not only
+  `/tvmjs/`. Confirm every subdomain serves HTTPS first. Add `; preload` only if you intend
+  to submit the domain to the preload list — it is very hard to undo.
+- **Same origin as the main site.** `/tvmjs/` shares an origin with the rest of
+  `walletadapter.org`, so script injected here can read that origin's storage. The pages'
+  `<meta>` CSP has to keep `'unsafe-inline'` for Next.js hydration, which is why the header
+  set above matters more than it would on a dedicated domain.
+- **Don't proxy other paths** to `github.io`; the `location` blocks above are the whole
+  surface.
+
+## 4. Verify
+
+```bash
+curl -sI https://walletadapter.org/tvmjs/          # 200, security headers present
+curl -sI https://walletadapter.org/tvmjs/docs      # 301 with Location on walletadapter.org
+curl -s  https://walletadapter.org/tvmjs/ | grep -o '/tvmjs/_next/static/[^"]*' | head -3
+curl -sI https://walletadapter.org/tvmjs/_next/static/media/  # served through the proxy
+```
+
+- The page must reference `/tvmjs/_next/...`, never `/<repo>/...` or `github.io`.
+- `curl -sI` responses must contain no `x-github-request-id` or `server: GitHub.com`.
+- View the page's `<link rel="canonical">`: it must be `https://walletadapter.org/tvmjs`.
+
+`pnpm preview` serves `dist/` locally with the subset of these headers it can set
+(`nosniff`, `X-Frame-Options`, `Referrer-Policy`).

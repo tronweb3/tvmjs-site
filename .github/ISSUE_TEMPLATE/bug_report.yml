@@ -1,0 +1,45 @@
+name: Bug report
+description: Something on the site or in the docs is broken
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository is the TVMJS **website and documentation**. For bugs in the TRON
+        Virtual Machine itself, please use
+        [tronweb3/tvmjs-monorepo](https://github.com/tronweb3/tvmjs-monorepo/issues).
+
+        For anything with a security impact, do not open an issue — see
+        [SECURITY.md](../blob/main/SECURITY.md).
+  - type: input
+    id: url
+    attributes:
+      label: Page
+      description: The URL where you saw it, or the file path if it is a source problem.
+      placeholder: https://walletadapter.org/tvmjs/roadmap.html
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: Include the exact error text or a screenshot if there is one.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and OS
+      placeholder: Firefox 133 on macOS 15
+  - type: checkboxes
+    id: local
+    attributes:
+      label: Reproduced locally?
+      options:
+        - label: I also saw this with `pnpm dev` or `pnpm preview`

@@ -1,0 +1,21 @@
+{
+  "name": "tvmjs-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Developer documentation for TVMJS — VitePress",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vitepress": "1.6.3",
+    "vitepress-plugin-group-icons": "1.5.2",
+    "vue": "3.5.13"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.37"
+  }
+}

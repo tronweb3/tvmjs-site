@@ -1,0 +1,78 @@
+/**
+ * Customize default theme styling by overriding CSS variables:
+ * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ */
+
+:root {
+  --vp-nav-logo-height: 50%;
+}
+
+.tip.custom-block {
+  padding: 0 16px !important;
+}
+
+.tip.custom-block .custom-block-title {
+  display: none !important;
+}
+
+.vp-code-group .lang {
+  display: none !important;
+}
+
+.vp-code-block-title .lang {
+  display: none !important;
+}
+
+html.dark .light-only {
+  display: none !important;
+}
+html:not(.dark) .dark-only {
+  display: none !important;
+}
+.px-3 {
+  padding: 0 12px;
+}
+.VPDoc.has-aside .content-container {
+  max-width: 750px !important;
+}
+
+/**
+ * Centre the home hero when it has no image.
+ *
+ * VitePress scopes every hero centring rule to `.VPHero.has-image` — with no image the
+ * copy is left-aligned against a wide empty right side. This page has no hero image, so
+ * centre it explicitly and cap the measure so the tagline stays readable.
+ */
+.VPHero:not(.has-image) .container {
+  text-align: center;
+}
+
+.VPHero:not(.has-image) .main {
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+/* `.name` and `.text` are `width: fit-content`, so centring the text inside them does
+   nothing — the box itself has to be centred. VitePress only does that for
+   `.has-image`, which left a short name like "TVMJS" pinned to the left while the
+   longer line underneath filled its max-width and looked almost centred. */
+.VPHero:not(.has-image) .name,
+.VPHero:not(.has-image) .text {
+  margin: 0 auto;
+}
+
+.VPHero:not(.has-image) .tagline {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.VPHero:not(.has-image) .actions {
+  justify-content: center;
+}
+
+/* The markdown below the features is prose, not a hero — keep it left-aligned and give
+   it the same measure as a normal docs page. */
+.VPHome .vp-doc.container {
+  max-width: 896px;
+  padding: 0 24px 64px;
+}

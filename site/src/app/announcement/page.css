@@ -1,0 +1,113 @@
+.announcement-content {
+  font-size: 16px;
+  color: #07094cb3;
+  line-height: 28px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.announcement-content code {
+  font-style: normal;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #4643df14;
+  color: #4643df;
+  font-size: 0.9em;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.announcement-content a {
+  color: #4643df;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.announcement-content a:hover {
+  color: #2e2bc8;
+  text-decoration: underline;
+}
+
+.announcement-content strong {
+  color: #07094c;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .announcement-content {
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+/* Featured card */
+.announcement-featured {
+  background: linear-gradient(135deg, #f4f3ff 0%, #fafafe 55%, #ffffff 100%);
+  border: 1px solid #4643df33;
+  box-shadow: 0 10px 40px -12px rgba(70, 67, 223, 0.15);
+}
+
+.announcement-featured-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  pointer-events: none;
+  z-index: 0;
+}
+.announcement-featured-glow--a {
+  top: -100px;
+  right: -100px;
+  width: 280px;
+  height: 280px;
+  background: #4643df;
+  opacity: 0.22;
+}
+.announcement-featured-glow--b {
+  bottom: -120px;
+  left: -80px;
+  width: 260px;
+  height: 260px;
+  background: #8a82ff;
+  opacity: 0.18;
+}
+
+/* "Latest Release" dot pulse */
+.latest-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  animation: latest-pulse 1.6s ease-out infinite;
+}
+@keyframes latest-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* Regular cards — subtle top accent on hover (matches centered layout) */
+.announcement-card::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(90deg, transparent, #4643df, transparent);
+  opacity: 0;
+  transition:
+    width 0.35s ease,
+    opacity 0.35s ease;
+}
+.announcement-card:hover::before {
+  width: 60%;
+  opacity: 1;
+}
