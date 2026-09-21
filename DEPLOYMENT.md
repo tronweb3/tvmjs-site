@@ -57,7 +57,23 @@ location ^~ /tvmjs/_next/static/ {
     proxy_pass https://tronweb3.github.io/tvmjs-site/_next/static/;
     proxy_ssl_server_name on;                  # SNI, required by GitHub Pages
     proxy_set_header Host tronweb3.github.io;  # Pages routes by Host header
+
+    # Same hide list as the block below, plus GitHub's own Cache-Control so ours is the
+    # only one (max-age=600 next to a year-long immutable is contradictory).
     proxy_hide_header Server;
+    proxy_hide_header Via;
+    proxy_hide_header Age;
+    proxy_hide_header Expires;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Access-Control-Allow-Origin;
+    proxy_hide_header X-GitHub-Request-Id;
+    proxy_hide_header X-GitHub-Edge-Region;
+    proxy_hide_header X-Fastly-Request-ID;
+    proxy_hide_header X-Proxy-Cache;
+    proxy_hide_header X-Served-By;
+    proxy_hide_header X-Cache;
+    proxy_hide_header X-Cache-Hits;
+    proxy_hide_header X-Timer;
 
     add_header Cache-Control "public, max-age=31536000, immutable" always;
     add_header X-Content-Type-Options "nosniff" always;
@@ -79,13 +95,21 @@ location ^~ /tvmjs/ {
     # Only the request methods a static site needs.
     limit_except GET HEAD { deny all; }
 
-    # Drop GitHub's own headers; the set below is the source of truth.
+    # Drop GitHub's and Fastly's own headers; the set below is the source of truth.
+    # `Access-Control-Allow-Origin: *` is GitHub Pages' default and has no use here.
+    proxy_hide_header Server;
+    proxy_hide_header Via;
+    proxy_hide_header Age;
+    proxy_hide_header Expires;
+    proxy_hide_header Access-Control-Allow-Origin;
     proxy_hide_header X-GitHub-Request-Id;
+    proxy_hide_header X-GitHub-Edge-Region;
+    proxy_hide_header X-Fastly-Request-ID;
+    proxy_hide_header X-Proxy-Cache;
     proxy_hide_header X-Served-By;
     proxy_hide_header X-Cache;
     proxy_hide_header X-Cache-Hits;
     proxy_hide_header X-Timer;
-    proxy_hide_header Server;
 
     # A static export cannot emit response headers, so set them here. add_header inside a
     # location replaces every add_header inherited from the server block, so repeat any
@@ -98,8 +122,7 @@ location ^~ /tvmjs/ {
     add_header Cross-Origin-Opener-Policy "same-origin" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
-    # Short cache for pages.
-    proxy_cache_valid 200 10m;
+    # Pages are cached by the browser for 10 minutes (GitHub's own Cache-Control, kept).
 }
 ```
 
@@ -112,6 +135,9 @@ Notes:
   `walletadapter.org`, so script injected here can read that origin's storage. The pages'
   `<meta>` CSP has to keep `'unsafe-inline'` for Next.js hydration, which is why the header
   set above matters more than it would on a dedicated domain.
+- **nginx's own `Server` header.** `proxy_hide_header Server` only removes GitHub's; nginx
+  still adds `Server: nginx/<version>`. Set `server_tokens off;` in the `http` or `server`
+  block to drop the version number.
 - **Don't proxy other paths** to `github.io`; the `location` blocks above are the whole
   surface.
 
@@ -125,7 +151,8 @@ curl -sI https://walletadapter.org/tvmjs/_next/static/media/  # served through t
 ```
 
 - The page must reference `/tvmjs/_next/...`, never `/tvmjs-site/...` or `github.io`.
-- `curl -sI` responses must contain no `x-github-request-id` or `server: GitHub.com`.
+- `curl -sI` responses must contain no `via`, `x-github-*`, `x-fastly-*` or `server: GitHub.com`
+  headers, and `/tvmjs/_next/static/…` exactly one `cache-control`.
 - View the page's `<link rel="canonical">`: it must be `https://walletadapter.org/tvmjs`.
 
 `pnpm preview` serves `dist/` locally with the subset of these headers it can set
