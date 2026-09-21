@@ -101,6 +101,10 @@ export default defineConfig({
   ] as [string, Record<string, string>][],
   themeConfig: {
     logo: '/logo.png',
+    // The logo and title lead out to the parent site at the origin root, not to the docs
+    // landing page (the default). `target: '_self'` matters: VitePress's router swallows
+    // clicks on same-origin anchors without a target and would keep the visitor in the docs.
+    logoLink: { link: '/', target: '_self' },
     siteTitle: 'TVMJS',
     outline: [2, 3],
     socialLinks: [{ icon: 'github', link: REPO_URL }],

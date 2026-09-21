@@ -82,6 +82,15 @@ describe('withBasePath', () => {
   });
 });
 
+describe('PARENT_ROOT', () => {
+  it('is the origin root whatever the base path, because it leads out of this site', async () => {
+    for (const base of ['/tvmjs', '']) {
+      const { PARENT_ROOT } = await loadConfig({ NEXT_PUBLIC_BASE_PATH: base });
+      expect(PARENT_ROOT).toBe('/');
+    }
+  });
+});
+
 describe('SITE_ROOT', () => {
   it('points at the mount point when nested', async () => {
     const { SITE_ROOT } = await loadConfig({ NEXT_PUBLIC_BASE_PATH: '/tvmjs' });

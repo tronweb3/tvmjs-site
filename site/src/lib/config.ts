@@ -40,6 +40,13 @@ export const absoluteUrl = (href: string) => `${SITE_URL}${href.startsWith('/') 
 /** The site's own root, base-path aware — the nav logo and footer link here. */
 export const SITE_ROOT = BASE_PATH || '/';
 
+/**
+ * The origin root — the parent property this site is mounted inside (walletadapter.org).
+ * Deliberately not base-path aware: the nav logo and title lead out of this site, while
+ * SITE_ROOT leads to its own home.
+ */
+export const PARENT_ROOT = '/';
+
 export const BRAND = 'TVMJS';
 
 export const GITHUB_URL = 'https://github.com/tronweb3/tvmjs-monorepo';

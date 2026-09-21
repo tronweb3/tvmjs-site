@@ -37,6 +37,9 @@ export type SidebarGroup = { text: string; items: NavLink[] };
 export function buildNav(basePath: string, version: string): NavEntry[] {
   return [
     { component: 'ExternalNavLink', props: { title: 'Home', href: basePath ? `${basePath}/` : '/' } },
+    // Back to the docs landing page. Named "Docs" rather than "Home" or "Overview": Home
+    // already means the site, and /tron/overview would make "Overview" ambiguous.
+    { text: 'Docs', link: '/' },
     { text: 'Guide', link: '/guide/introduction', activeMatch: '/guide/' },
     { text: 'TRON Semantics', link: '/tron/overview', activeMatch: '/tron/' },
     { text: 'Packages', link: '/packages/', activeMatch: '/packages/' },

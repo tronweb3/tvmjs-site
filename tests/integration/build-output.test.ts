@@ -116,6 +116,19 @@ describe('base path', () => {
     expect(read('announcement.html')).toContain(`url(${BASE_PATH}/bg-announcement.svg)`);
   });
 
+  it('links the nav logo and title to the origin root, out of the site', () => {
+    const header = read('index.html').match(/<header[\s\S]*?<\/header>/)?.[0] ?? '';
+    expect(header).toMatch(
+      /<a[^>]*class="no-underline shrink-0"[^>]*href="\/"|<a[^>]*href="\/"[^>]*class="no-underline shrink-0"/
+    );
+  });
+
+  it('links the docs logo and title to the origin root, out of the docs', () => {
+    const title = read('docs/index.html').match(/<a[^>]*class="title"[^>]*>/)?.[0] ?? '';
+    expect(title).toContain('href="/"');
+    expect(title).toContain('target="_self"');
+  });
+
   it('links the docs Home entry back to the site root, not into the docs base', () => {
     // Matching the anchor itself rather than the bare href: at BASE_PATH='' the
     // double-prefixed form this guards against ("/docs/") is also a legitimate href
@@ -124,6 +137,9 @@ describe('base path', () => {
     expect(anchors.length).toBeGreaterThan(0);
     for (const anchor of anchors) {
       expect(anchor).toContain(`href="${BASE_PATH}/"`);
+      // Without a target attribute VitePress's router swallows the click as an in-docs
+      // pushState and the visitor never leaves the docs.
+      expect(anchor).toContain('target="_self"');
     }
   });
 });
@@ -318,6 +334,9 @@ describe('internal links resolve', () => {
         // Next's RSC payload references route data files that the export does not emit
         // as .html; those are chunk URLs, already covered by the base-path assertions.
         if (href.includes('/_next/')) continue;
+        // The nav logo and title deliberately lead out of this site to the parent at the
+        // origin root; that page is not part of this artifact when nested under BASE_PATH.
+        if (BASE_PATH && href === '/') continue;
         if (!resolves(href)) broken.push(`${page} -> ${href}`);
       }
     }

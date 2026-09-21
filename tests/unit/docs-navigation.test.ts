@@ -51,6 +51,11 @@ describe('nav', () => {
     expect('props' in home && home.props.href).toBe('/');
   });
 
+  it('has a Docs entry that leads to the docs landing page', () => {
+    const docs = nav.find((entry) => 'text' in entry && entry.text === 'Docs');
+    expect(docs && 'link' in docs && docs.link).toBe('/');
+  });
+
   it.each(
     buildNav('/tvmjs', TVMJS_VERSION)
       .flatMap((entry) => ('items' in entry ? entry.items : 'link' in entry ? [entry] : []))

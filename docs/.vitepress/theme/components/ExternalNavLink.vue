@@ -5,6 +5,12 @@
  * VitePress prefixes any nav `link` starting with `/` with the site base, so
  * `/tvmjs-site/` would resolve to `/tvmjs-site/docs/tvmjs-site/`. This renders the href verbatim.
  *
+ * `target="_self"` is what makes the link work. VitePress's router intercepts every click on
+ * a same-origin `<a>` and loads it as a docs page through history.pushState, which for a
+ * URL outside the docs base renders nothing and leaves the visitor where they were. It only
+ * skips anchors that carry a `target` attribute (router.js), so `_self` hands the click back
+ * to the browser for a real navigation. It still opens in the same tab.
+ *
  * Deliberately no click handler: the href alone navigates, and adding one would break
  * cmd/ctrl-click and middle-click into a new tab.
  */
@@ -15,7 +21,7 @@ defineProps({
 </script>
 
 <template>
-  <a class="external-nav-link" :href="href">
+  <a class="external-nav-link" :href="href" target="_self">
     <span>{{ title }}</span>
   </a>
 </template>

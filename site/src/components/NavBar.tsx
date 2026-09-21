@@ -2,7 +2,7 @@
 import { Button, Drawer, styled } from '@mui/material';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { NAV_LIST, NavItem, isNavGroup, isActivePath, assetPath, withBasePath, SITE_ROOT, BRAND } from '@/lib/config';
+import { NAV_LIST, NavItem, isNavGroup, isActivePath, assetPath, withBasePath, PARENT_ROOT, BRAND } from '@/lib/config';
 import Link from 'next/link';
 import { HTMLAttributeAnchorTarget } from 'react';
 
@@ -175,9 +175,9 @@ export function NavBar({ pathname }: { pathname: string }) {
       <div className="relative flex h-[50px] md:h-16 items-center w-[100vw] md:w-[1200px] xl:w-[1360px] md:px-4 xl:px-0 m-auto">
         {/* Logo and nav sit together on the left. `mr-auto` pushes the remaining
             space to the right instead of spreading the items across the bar. */}
-        {/* Plain <a>, not next/link: SITE_ROOT is already base-path aware, and Link would
-            prefix basePath a second time. */}
-        <a href={SITE_ROOT} className="no-underline shrink-0">
+        {/* The logo and title lead out to the parent site at the origin root. A plain <a>,
+            not next/link: Link would prefix basePath and stay inside this site. */}
+        <a href={PARENT_ROOT} className="no-underline shrink-0">
           <PageTitle>
             <Image src={assetPath('/logo.png')} alt="" width={24} height={24} />
             <span>{BRAND}</span>
