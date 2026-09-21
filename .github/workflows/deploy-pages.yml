@@ -30,15 +30,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # The base path is the repository name, which is the path GitHub Pages serves the
-      # files under, so the same build works on github.io and behind the nginx reverse
-      # proxy. It is pinned here rather than taken from actions/configure-pages (which
-      # would also rewrite next.config.ts). See DEPLOYMENT.md.
+      # The base path is the PUBLIC one served by the nginx reverse proxy, not the
+      # /<repo> path GitHub Pages serves the files under, so it is pinned here rather than
+      # taken from actions/configure-pages (which would also rewrite next.config.ts).
+      # See DEPLOYMENT.md.
       - name: Build
         run: pnpm build
         env:
-          BASE_PATH: /tvmjs-site
-          SITE_URL: https://walletadapter.org/tvmjs-site
+          BASE_PATH: /tvmjs
+          SITE_URL: https://walletadapter.org/tvmjs
           # Repository or organisation variable (not a secret — the ID is public in the page
           # HTML). Unset means no analytics.
           NEXT_PUBLIC_GA_ID: ${{ vars.NEXT_PUBLIC_GA_ID }}

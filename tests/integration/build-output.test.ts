@@ -123,6 +123,11 @@ describe('base path', () => {
     );
   });
 
+  it('links the footer logo to the origin root, like the nav logo', () => {
+    const footer = read('index.html').match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
+    expect(footer.match(/<a[^>]*>/)?.[0]).toContain('href="/"');
+  });
+
   it('links the docs logo and title to the origin root, out of the docs', () => {
     const title = read('docs/index.html').match(/<a[^>]*class="title"[^>]*>/)?.[0] ?? '';
     expect(title).toContain('href="/"');

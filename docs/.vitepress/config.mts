@@ -14,13 +14,13 @@ const version = TVMJS_VERSION;
  * BASE_PATH in step with the value used for the `site/` build — the two are wired together
  * by the root `pnpm build`.
  */
-const rawBasePath = process.env.BASE_PATH ?? '/tvmjs-site';
+const rawBasePath = process.env.BASE_PATH ?? '/tvmjs';
 const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath.replace(/\/+$/, '');
 
 // VitePress requires `base` to both start and end with a slash.
 const DOCS_BASE = `${BASE_PATH}/docs/`;
 
-const SITE_URL = (process.env.SITE_URL ?? 'https://walletadapter.org/tvmjs-site').replace(/\/+$/, '');
+const SITE_URL = (process.env.SITE_URL ?? 'https://walletadapter.org/tvmjs').replace(/\/+$/, '');
 
 /** Empty disables analytics entirely — the default for forks and local builds. */
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? '';

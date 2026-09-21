@@ -3,7 +3,7 @@
  * A nav link that escapes VitePress's `base`.
  *
  * VitePress prefixes any nav `link` starting with `/` with the site base, so
- * `/tvmjs-site/` would resolve to `/tvmjs-site/docs/tvmjs-site/`. This renders the href verbatim.
+ * `/tvmjs/` would resolve to `/tvmjs/docs/tvmjs/`. This renders the href verbatim.
  *
  * `target="_self"` is what makes the link work. VitePress's router intercepts every click on
  * a same-origin `<a>` and loads it as a docs page through history.pushState, which for a

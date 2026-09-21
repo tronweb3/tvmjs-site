@@ -21,8 +21,8 @@ describe('resolveBasePath', () => {
     }
   };
 
-  it('defaults to /tvmjs-site so an unconfigured build reproduces the current deployment', () => {
-    withEnv(undefined, () => expect(resolveBasePath()).toBe('/tvmjs-site'));
+  it('defaults to /tvmjs so an unconfigured build reproduces the current deployment', () => {
+    withEnv(undefined, () => expect(resolveBasePath()).toBe('/tvmjs'));
   });
 
   it('treats an empty value as the origin root', () => {
