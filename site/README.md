@@ -10,7 +10,7 @@ Run from this directory (or use the root `pnpm dev`, which serves this app and t
 behind one proxy so cross-app links work):
 
 ```bash
-pnpm dev        # Next dev server — serves under BASE_PATH, so http://localhost:3000/tvmjs-site
+pnpm dev        # Next dev server — serves under BASE_PATH, so http://localhost:3000/tvmjs
 pnpm build      # static export → out/
 pnpm lint       # ESLint
 pnpm typecheck  # next typegen && tsc --noEmit
@@ -34,7 +34,7 @@ comparison work in both.
 
 ## Base path
 
-`basePath` comes from the `BASE_PATH` environment variable and defaults to `/tvmjs-site`. It
+`basePath` comes from the `BASE_PATH` environment variable and defaults to `/tvmjs`. It
 applies in `next dev` too, so the local URL carries the prefix.
 
 Next rewrites routes and its own chunk URLs for `basePath`, but **not**:

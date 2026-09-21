@@ -9,7 +9,7 @@ TVMJS. If your change is to the TRON Virtual Machine itself, it belongs in
 ```bash
 corepack enable      # pnpm 11, pinned via packageManager
 pnpm install
-pnpm dev             # http://localhost:3100/tvmjs-site/
+pnpm dev             # http://localhost:3100/tvmjs/
 ```
 
 Node 24 is what CI runs; `.nvmrc` pins it. Anything ≥ 22 should work locally.

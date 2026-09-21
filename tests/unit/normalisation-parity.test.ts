@@ -14,7 +14,7 @@ import path from 'node:path';
 const ROOT = path.resolve(import.meta.dirname, '../..');
 
 const NORMALISATION = `const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath.replace(/\\/+$/, '');`;
-const DEFAULT_RAW = `process.env.BASE_PATH ?? '/tvmjs-site'`;
+const DEFAULT_RAW = `process.env.BASE_PATH ?? '/tvmjs'`;
 
 describe.each([['site/next.config.ts'], ['docs/.vitepress/config.mts']])('%s', (file) => {
   const source = fs.readFileSync(path.join(ROOT, file), 'utf8');
@@ -23,7 +23,7 @@ describe.each([['site/next.config.ts'], ['docs/.vitepress/config.mts']])('%s', (
     expect(source).toContain(NORMALISATION);
   });
 
-  it('defaults BASE_PATH to /tvmjs-site', () => {
+  it('defaults BASE_PATH to /tvmjs', () => {
     expect(source).toContain(DEFAULT_RAW);
   });
 });
