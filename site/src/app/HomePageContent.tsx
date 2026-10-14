@@ -22,6 +22,7 @@ const FEATURES = [
 ];
 
 const PACKAGES = [
+  { name: '@tvmjs/client', desc: 'Local TRON development node and HTTP REST API' },
   { name: '@tvmjs/tvm', desc: 'Bytecode interpreter — TRON opcodes, Energy, precompiles' },
   { name: '@tvmjs/vm', desc: 'Execution context for transactions and blocks' },
   { name: '@tvmjs/tx', desc: 'Local transaction types with TRC-10 fields' },

@@ -20,18 +20,17 @@ derivation and a 64-level call depth limit.
 
 ## Where these rules apply
 
-Most TRON behaviour (such as address derivation, EIP-150 energy forwarding, and size limits) is
-gated on the **chain profile** (`Common.isTron()`) and hardforks. However, under default TVM
-parameters and precompiles, the 64-level call depth limit and TRON precompiles (`0x03`, `0x09`,
-`0x0a`) apply across all built-in configurations (unless explicitly overridden via `params` or
-`customPrecompiles`).
+Most TRON behaviour (such as address derivation, TRON energy forwarding, and size limits) is
+governed by the **TRON chain profile** (`Common.isTron()`). Under default TVM parameters and
+precompiles, the 64-level call depth limit and TRON precompiles (`0x03`, `0x09`, `0x0a`) apply
+across all TRON presets (unless explicitly overridden via `params` or `customPrecompiles`).
 
-Some newer behaviour is gated further, on TRON network proposals — see
+Newer behaviour is gated on TRON network proposals — see
 [network proposals](/guide/chain-configuration#network-proposals).
 
 ## Fidelity and its limits
 
-TVMJS aims to match `java-tron`, and 1.1.0 closed most of the gap. But:
+TVMJS aims to match `java-tron`, with continuous alignment across releases (including Energy alignment verified across 71 reference scenarios in 1.2.0). But:
 
 ::: danger Not a substitute for the real chain
 TVMJS is an execution library. Differences from `java-tron` are bugs, not features — but they can

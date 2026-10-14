@@ -38,13 +38,12 @@ Under TRON version-0 rules, the CALL and CREATE families (including `CALL`, `CAL
 rule which reserves 1/64 for the caller. A contract that relies on having 1/64 energy left after a
 failing subcall behaves differently on the two chains.
 
-Ethereum EIP-150 forwarding is preserved on Ethereum hardfork paths.
+TVMJS enforces TRON energy forwarding rules across all supported VM executions.
 
 ## Size limits are lifted
 
 Ethereum's EIP-170 runtime-size limit and EIP-3860 initcode-size limit and word metering do **not**
-apply on TRON chain profiles — independently of the selected hardfork. Code-deposit energy and the
-other deployment validation are unchanged.
+apply on TRON chain profiles. Code-deposit energy and the other deployment validation are unchanged.
 
 This is chain-level, so it holds whenever `Common.isTron()` is true.
 

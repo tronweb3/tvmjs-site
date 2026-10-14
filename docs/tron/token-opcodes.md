@@ -15,29 +15,28 @@ make that visible to contract code.
 
 ## Token IDs are range-checked, not existence-checked
 
-`CALLTOKEN` and `TOKENBALANCE` validate only that the token ID is **in range**. They do not require
-`StateManager.tokenIdExists()` and do not reject an ID just because it is unissued. Within the
-precision limit below, an unissued ID continues execution or returns zero.
+`CALLTOKEN` and `TOKENBALANCE` validate only that the token ID is **in range**. Valid protocol token
+IDs are integers satisfying `1000000 < id <= 2^63 - 1`. `CALLTOKEN` additionally accepts `0` to denote
+that no token is transferred with the call.
+
+They do not require `StateManager.tokenIdExists()` and do not reject an ID just because it is unissued:
+an unissued ID within range continues execution or returns zero. Token IDs outside the valid range are
+rejected.
 
 This matches `java-tron`. Code written against 1.0.0 that expected an unissued ID to throw will see
 different behaviour.
 
-## Token ID precision limit in 1.1.0 {#token-id-precision-limit}
+## Token ID precision {#token-id-precision-limit}
 
-::: warning Range validation does not guarantee lossless token IDs
-TVMJS 1.1.0 accepts token IDs within the protocol's signed 64-bit range, but converts IDs to
-JavaScript `number` values when accessing account token balances. IDs above
-`Number.MAX_SAFE_INTEGER` (`9007199254740991`) can lose precision: different IDs can resolve to
-the same balance key, causing incorrect balance reads or transfers.
+Starting in 1.2.0, TVMJS preserves full 64-bit token ID precision (`bigint`) across transactions,
+account balances, serialization, and state management, preventing collisions above JavaScript's safe-integer
+range (`Number.MAX_SAFE_INTEGER`).
 
-Applications should reject IDs above this limit before passing them to TVMJS. Validate the original
-integer using `bigint` or another lossless representation, before converting it to `number`.
-Passing a `bigint` alone does not avoid TVMJS's internal conversion. This additional upper bound
-does not replace the existing protocol range checks.
-
-Contract execution can also produce token IDs internally. If execution accesses IDs above this
-limit, do not rely on its token balances or transfer results, even if the initial inputs passed
-validation. This is a current implementation limitation, not a restriction of the TRON protocol.
+::: tip Resolved in 1.2.0
+In 1.1.0, token IDs were converted to JavaScript `number` values internally, which required
+applications to reject token IDs above `Number.MAX_SAFE_INTEGER` (`9007199254740991`). In 1.2.0,
+TVMJS losslessly represents and operates on the complete protocol integer range (`1000000 < id <= 2^63 - 1`,
+plus `0` for `CALLTOKEN`) without key collisions or precision loss.
 :::
 
 ## Transfers at the message level
@@ -56,9 +55,10 @@ Two TRON-specific errors guard self-transfers:
 `tokenId` and `tokenValue` are carried by the **signed legacy transaction format**.
 
 ::: warning Typed transactions reject token fields
-Nonzero `tokenId` / `tokenValue` are rejected on EIP-2930, EIP-1559, EIP-4844 and EIP-7702
-transactions. Those formats do not include the fields in their signing payload or serialisation, so
-accepting them would produce a signature that does not commit to the transfer.
+Nonzero `tokenId` / `tokenValue` are rejected on retained typed transactions (EIP-2930 and EIP-1559).
+Those formats do not include the fields in their signing payload or serialisation, so accepting them
+would produce a signature that does not commit to the transfer. Unsupported Ethereum formats like
+EIP-4844 and EIP-7702 are rejected entirely at transaction and block entry points.
 :::
 
 ## Nonce interaction

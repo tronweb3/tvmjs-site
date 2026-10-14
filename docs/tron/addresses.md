@@ -52,8 +52,9 @@ const address = generateTronAddress2(deployer, salt, initCode);
 
 :::
 
-Inside the VM, the derivation is selected by hardfork rather than applied globally — Ethereum
-hardfork paths use EIP-1014, TRON profiles use the `0x41` preimage.
+Inside the VM, execution is bound to TRON chain profiles and strictly uses the `0x41` preimage.
+Ethereum's EIP-1014 `0xff` derivation remains available as the standalone helper `generateAddress2()`
+in `@tvmjs/util` for cross-chain tooling.
 
 ## CREATE
 
@@ -63,7 +64,8 @@ TRON does not derive `CREATE` addresses from `RLP(sender, nonce)`.
 - **Internal CREATE:** derived from the root transaction ID and the transaction-wide internal nonce,
   via `generateTronCreateAddress(rootTransactionId, nonce)`.
 
-Ethereum `CREATE` behaviour via `generateAddress()` is preserved on Ethereum hardfork paths.
+Ethereum's `RLP(sender, nonce)` derivation remains available as the standalone helper
+`generateAddress()` in `@tvmjs/util`.
 
 See [Transaction IDs](/tron/transaction-ids) for where the ID comes from — it determines the
 address, so getting it wrong produces a different contract address than the real chain.
