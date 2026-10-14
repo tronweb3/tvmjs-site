@@ -1,6 +1,8 @@
 export type MilestoneStatus = 'released' | 'in-progress' | 'planned';
 
 export type Milestone = {
+  /** Stable identity: a quarter may have both a release and a forward plan. */
+  id: string;
   /** Quarter label shown on the card, e.g. "Q1". */
   quarter: string;
   year: string;
@@ -19,19 +21,33 @@ export type Milestone = {
  * Copy may wrap identifiers in `backticks`; RoadmapPageContent renders those spans as
  * inline code, so the data here stays plain strings.
  *
- * Fill `summary` / `items` in as each quarter is planned, and move `status` from
- * `planned` to `in-progress` to `released`. A quarter with no `items` renders the
- * "to be announced" placeholder.
+ * Fill `summary` and `items` for each milestone. A quarter can contain separate
+ * plan and release entries. An entry without items renders the "to be announced"
+ * placeholder.
  *
- * Q2 mirrors the 1.0.0 announcement (see app/announcement/announcements.tsx) and Q3
- * summarises the 1.1.0 release (the CHANGELOG of each tvmjs-monorepo package) — keep
- * them in step when a release lands.
+ * Q2 mirrors the 1.0.0 announcement (see app/announcement/announcements.tsx), Q3
+ * summarises 1.1.0, and the Q4 release summarises 1.2.0. Keep release entries in
+ * step with the corresponding announcements.
  */
 export const MILESTONES: Milestone[] = [
   {
+    id: '2026-q4-plan',
     quarter: 'Q4',
     year: '2026',
     status: 'planned',
+    summary: 'Execution diagnostics, java-tron compatibility, release reliability, and security.',
+    items: [
+      'Add transaction diagnostics to `@tvmjs/client` debug RPC, combining execution summaries, Energy usage, common failure reasons, and tool-friendly results.',
+      'Compare core execution with java-tron v4.8.2.3, fix confirmed compatibility gaps, and strengthen regressions for storage, deployment, precompiles, and rollback.',
+      'Complete at least one stable release with all agreed core regressions passing, plus a four-hour fixed-workload run to check state isolation, hangs, and memory growth.',
+      'Maintain security scans and dependency reviews, with all confirmed High/Critical issues fixed and retested before release.',
+    ],
+  },
+  {
+    id: '1.2.0-release',
+    quarter: 'Q4',
+    year: '2026',
+    status: 'released',
     summary: 'TVMJS 1.2.0 — TRON execution profiles, Energy alignment, and RPC client PoC.',
     items: [
       'Extend java-tron Energy alignment by removing Ethereum’s EIP-2929 warm/cold access pricing and aligning account access, storage operations, `CALL`/`CALLTOKEN`, `SELFDESTRUCT` and refund behavior across VM and TVM execution.',
@@ -43,6 +59,7 @@ export const MILESTONES: Milestone[] = [
     ],
   },
   {
+    id: '1.1.0-release',
     quarter: 'Q3',
     year: '2026',
     status: 'released',
@@ -58,6 +75,7 @@ export const MILESTONES: Milestone[] = [
     ],
   },
   {
+    id: '1.0.0-release',
     quarter: 'Q2',
     year: '2026',
     status: 'released',
@@ -83,9 +101,13 @@ function quarterNumber(quarter: string) {
   return Number(quarter.replace(/\D/g, '')) || 0;
 }
 
-/** Milestones in reverse chronological order — most recent quarter first. */
+/** Milestones in reverse chronological order, with plans before releases in one quarter. */
 export function sortedMilestones(): Milestone[] {
-  return [...MILESTONES].sort((a, b) =>
-    a.year === b.year ? quarterNumber(b.quarter) - quarterNumber(a.quarter) : Number(b.year) - Number(a.year)
-  );
+  const statusOrder: Record<MilestoneStatus, number> = { planned: 2, 'in-progress': 1, released: 0 };
+  return [...MILESTONES].sort((a, b) => {
+    const yearOrder = Number(b.year) - Number(a.year);
+    if (yearOrder !== 0) return yearOrder;
+    const quarterOrder = quarterNumber(b.quarter) - quarterNumber(a.quarter);
+    return quarterOrder !== 0 ? quarterOrder : statusOrder[b.status] - statusOrder[a.status];
+  });
 }

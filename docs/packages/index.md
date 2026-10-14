@@ -1,8 +1,14 @@
 # Packages
 
-TVMJS is a monorepo of eleven packages published under the
+TVMJS is a monorepo of twelve packages published under the
 [`@tvmjs`](https://www.npmjs.com/org/tvmjs) npm organisation. Install only what you need — the
 dependency arrows below show what pulls in what.
+
+## Client and node
+
+| Package                                                        | Description                                                                         |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [`@tvmjs/client`](https://www.npmjs.com/package/@tvmjs/client) | Local TRON development node: CLI (`tvmjs`), REST API (`/wallet/*`), mining controls |
 
 ## Execution
 
@@ -13,11 +19,11 @@ dependency arrows below show what pulls in what.
 
 ## Data types
 
-| Package                                                        | Description                                                             |
-| -------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [`@tvmjs/tx`](https://www.npmjs.com/package/@tvmjs/tx)         | Transaction types, including the TRC-10 `tokenId` / `tokenValue` fields |
-| [`@tvmjs/block`](https://www.npmjs.com/package/@tvmjs/block)   | Block and block header types                                            |
-| [`@tvmjs/common`](https://www.npmjs.com/package/@tvmjs/common) | Chain and hardfork configuration shared across packages                 |
+| Package                                                        | Description                                                                |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [`@tvmjs/tx`](https://www.npmjs.com/package/@tvmjs/tx)         | Transaction types, including the TRC-10 `tokenId` / `tokenValue` fields    |
+| [`@tvmjs/block`](https://www.npmjs.com/package/@tvmjs/block)   | Block and block header types                                               |
+| [`@tvmjs/common`](https://www.npmjs.com/package/@tvmjs/common) | TRON network configuration, proposals and EIP rules shared across packages |
 
 ## State and storage
 
@@ -38,34 +44,39 @@ dependency arrows below show what pulls in what.
 ## Dependency shape
 
 ```
-@tvmjs/vm            top-level execution context
- ├── @tvmjs/tvm      bytecode interpreter (opcodes, energy, precompiles)
- │    └── @tvmjs/statemanager   account/storage state
- │         └── @tvmjs/mpt       Merkle Patricia Trie
- ├── @tvmjs/tx       transaction types (with tokenId/tokenValue)
- ├── @tvmjs/block    block / block header
- ├── @tvmjs/blockchain   chain management
- └── @tvmjs/common   shared chain config
+@tvmjs/client        local TRON development node (HTTP REST API, mining, accounts)
+ └── @tvmjs/vm       top-level execution context
+      ├── @tvmjs/tvm bytecode interpreter (opcodes, energy, precompiles)
+      │    └── @tvmjs/statemanager   account/storage state
+      │         └── @tvmjs/mpt       Merkle Patricia Trie
+      ├── @tvmjs/tx  transaction types (with tokenId/tokenValue)
+      ├── @tvmjs/block    block / block header
+      ├── @tvmjs/blockchain   chain management
+      └── @tvmjs/common   shared chain config
 ```
 
 ## Versioning
 
-The packages are released together but do not share one version number. As of the 1.1.0 release:
+The packages are released together but do not share one version number. As of the 1.2.0 release:
 
-| Version | Packages                                                                                                   |
-| ------- | ---------------------------------------------------------------------------------------------------------- |
-| `1.1.0` | `@tvmjs/common`, `@tvmjs/tvm`, `@tvmjs/util`, `@tvmjs/vm`                                                  |
-| `1.0.1` | `@tvmjs/binarytree`, `@tvmjs/block`, `@tvmjs/blockchain`, `@tvmjs/mpt`, `@tvmjs/statemanager`, `@tvmjs/tx` |
-| `1.0.0` | `@tvmjs/rlp`                                                                                               |
+| Version | Packages                                                                                                                                                |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `1.2.0` | `@tvmjs/binarytree`, `@tvmjs/block`, `@tvmjs/blockchain`, `@tvmjs/common`, `@tvmjs/statemanager`, `@tvmjs/tvm`, `@tvmjs/tx`, `@tvmjs/util`, `@tvmjs/vm` |
+| `1.0.2` | `@tvmjs/mpt`                                                                                                                                            |
+| `1.0.0` | `@tvmjs/client`, `@tvmjs/rlp`                                                                                                                           |
 
 ## Reference documentation
 
-Each package ships a README with its full API surface, supported hardforks and EIP tables. They are
-the authoritative reference:
+Each package ships a README covering its full API surface and usage. In particular, the
+[`@tvmjs/common` README](https://github.com/tronweb3/tvmjs-monorepo/tree/master/packages/common)
+documents supported TRON network presets, active proposals, and EIP tables:
 
 [github.com/tronweb3/tvmjs-monorepo/tree/master/packages](https://github.com/tronweb3/tvmjs-monorepo/tree/master/packages)
 
-## Builds
+## Builds and environment support
 
-All packages ship hybrid CJS/ESM builds and run in the browser. See the _Browser_ and _Hybrid
-CJS/ESM Builds_ sections of each README.
+Core execution, state, and data packages ship hybrid CJS/ESM builds and run in both Node.js and
+browser environments. See the _Browser_ and _Hybrid CJS/ESM Builds_ sections of each package README.
+
+`@tvmjs/client` provides an in-memory HTTP development server and CLI tooling; it targets Node.js
+environments (Node.js >= 20) and relies on `node:http`.

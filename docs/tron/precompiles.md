@@ -34,15 +34,15 @@ This is gated — it only applies when Proposal 96 is activated:
 ```ts
 import { Common, TronMainnet } from '@tvmjs/common';
 
-const common = new Common({ chain: TronMainnet, activatedProposals: [96] });
+const common = new Common({ chain: TronMainnet, activatedProposals: [65, 96] });
 ```
 
 Without the gate, the pre-TIP-854 behaviour applies. See
 [network proposals](/guide/chain-configuration#network-proposals).
 
-## Disabled upstream precompiles
+## Removed upstream precompiles
 
-- `KZG_POINT_EVALUATION` (EIP-4844) is disabled — not supported by TRON.
+- `KZG_POINT_EVALUATION` (EIP-4844) is removed — not supported by TRON.
 
 ## Custom precompiles
 
