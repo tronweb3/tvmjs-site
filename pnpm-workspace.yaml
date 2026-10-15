@@ -12,6 +12,12 @@ allowBuilds:
   unrs-resolver: false
   sharp: false
 
+# braces has no patched release; it is only reached through @next/eslint-plugin-next at lint
+# time. Remove once a fixed braces ships and `pnpm audit` is re-checked.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm
+
 # Security overrides. pnpm >= 11 no longer reads `pnpm.overrides` from package.json;
 # this is the supported location. See https://pnpm.io/settings
 #
