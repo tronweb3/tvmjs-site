@@ -11,6 +11,8 @@ export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 /** Public origin (including base path) used for canonical and Open Graph URLs. */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://walletadapter.org/tvmjs').replace(/\/+$/, '');
 
+export const PAGES_URL = process.env.NEXT_PUBLIC_PAGES_URL ?? '';
+
 /** Google Analytics measurement ID. Empty disables analytics — see layout.tsx. */
 export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? '';
 

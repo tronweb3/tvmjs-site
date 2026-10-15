@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Wix_Madefor_Display } from 'next/font/google';
 import './globals.css';
-import { assetPath, GA_ID, SITE_URL } from '@/lib/config';
+import { assetPath, GA_ID, PAGES_URL, SITE_URL } from '@/lib/config';
+import { pagesRedirectScript } from '@/lib/pages-redirect';
 
 // Self-hosted at build time: next/font downloads the faces once and emits them under
 // /_next/static/media, so visitors never contact Google and the CSP needs no font host.
@@ -69,9 +70,11 @@ export default function RootLayout({
   // Analytics is opt-in: a fork or a local build with no NEXT_PUBLIC_GA_ID set ships no
   // tracking at all, and the connect-src/script-src allowances below are then unused.
   const analyticsEnabled = process.env.NODE_ENV === 'production' && GA_ID !== '';
+  const pagesRedirect = pagesRedirectScript(PAGES_URL, SITE_URL);
   return (
     <html lang="en" className={`${inter.variable} ${wix.variable}`}>
       <head>
+        {pagesRedirect ? <script dangerouslySetInnerHTML={{ __html: pagesRedirect }} /> : null}
         {analyticsEnabled ? (
           <>
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_ID)}`} />

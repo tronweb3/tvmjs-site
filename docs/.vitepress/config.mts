@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
 import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons';
 import { TVMJS_VERSION } from './version';
+import { pagesRedirectScript } from './pages-redirect';
 import { buildNav, SIDEBAR_WITH_RELEASES, SRC_EXCLUDE, REPO_URL, HOME_REPO_URL } from './navigation';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -22,6 +23,8 @@ const DOCS_BASE = `${BASE_PATH}/docs/`;
 
 const SITE_URL = (process.env.SITE_URL ?? 'https://walletadapter.org/tvmjs').replace(/\/+$/, '');
 
+const PAGES_REDIRECT = pagesRedirectScript(process.env.PAGES_URL ?? 'https://tronweb3.github.io/tvmjs-site', SITE_URL);
+
 /** Empty disables analytics entirely — the default for forks and local builds. */
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? '';
 const analyticsEnabled = isProduction && GA_ID !== '';
@@ -36,6 +39,7 @@ export default defineConfig({
   cleanUrls: false,
   srcExclude: SRC_EXCLUDE,
   head: [
+    ...(PAGES_REDIRECT ? [['script', {}, PAGES_REDIRECT]] : []),
     ['link', { rel: 'icon', href: `${DOCS_BASE}favicon.ico` }],
     [
       'meta',

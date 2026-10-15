@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_BASE_PATH: BASE_PATH,
     NEXT_PUBLIC_SITE_URL: SITE_URL,
+    NEXT_PUBLIC_PAGES_URL: process.env.PAGES_URL ?? 'https://tronweb3.github.io/tvmjs-site',
     // Empty disables analytics entirely — the default for forks and local builds.
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID ?? '',
   },
