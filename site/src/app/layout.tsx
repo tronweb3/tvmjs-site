@@ -70,6 +70,10 @@ export default function RootLayout({
   // Analytics is opt-in: a fork or a local build with no NEXT_PUBLIC_GA_ID set ships no
   // tracking at all, and the connect-src/script-src allowances below are then unused.
   const analyticsEnabled = process.env.NODE_ENV === 'production' && GA_ID !== '';
+  // React's development runtime calls eval() for debugging features such as rebuilding
+  // call stacks, and logs a console error when the CSP blocks it. Production React never
+  // uses eval(), so the allowance is limited to dev builds and the shipped CSP is unchanged.
+  const devScriptSrc = process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'";
   const pagesRedirect = pagesRedirectScript(PAGES_URL, SITE_URL);
   return (
     <html lang="en" className={`${inter.variable} ${wix.variable}`}>
@@ -115,7 +119,7 @@ export default function RootLayout({
           httpEquiv="Content-Security-Policy"
           content={[
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+            `script-src 'self' 'unsafe-inline'${devScriptSrc} https://www.googletagmanager.com https://www.google-analytics.com`,
             "style-src 'self' 'unsafe-inline'",
             "font-src 'self' data:",
             "img-src 'self' data:",
