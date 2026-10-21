@@ -28,7 +28,7 @@ overrides:
   # open advisories. Vite 7 is the highest major VitePress 1.x still builds cleanly on:
   # it pulls a patched esbuild 0.25+ and is still Rollup-based, whereas Vite 8 switches
   # to Rolldown and floods the docs build with plugin-compatibility warnings.
-  vite: '7.3.6'
+  vite: '7.3.7'
 
   # VitePress 1.6.3 bundles its own markdown-it typings, while vitepress-plugin-group-icons
   # types its plugin against @types/markdown-it. 14.2.0 added `utils.isPunctCharCode`, which
