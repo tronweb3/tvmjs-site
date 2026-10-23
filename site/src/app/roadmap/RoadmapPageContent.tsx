@@ -51,7 +51,7 @@ export function RoadmapPageContent() {
           <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[#07094c1a] hidden md:block" aria-hidden />
           <ol className="relative m-0 p-0 list-none">
             {sortedMilestones().map((milestone) => (
-              <li key={`${milestone.year}-${milestone.quarter}`} className="relative md:pl-10 mb-4 md:mb-6 last:mb-0">
+              <li key={milestone.id} className="relative md:pl-10 mb-4 md:mb-6 last:mb-0">
                 <span
                   className={`absolute left-0 top-6 hidden md:block w-[15px] h-[15px] rounded-full border-[3px] border-white ${
                     MARKER_CLASS[milestone.status]

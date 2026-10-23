@@ -6,7 +6,7 @@ import { TVMJS_VERSION } from '../../docs/.vitepress/version';
 /**
  * The roadmap and the announcements are hand-maintained data files, edited once a quarter
  * by whoever ships the release. These assertions cover the mistakes that edit actually
- * makes: a duplicated quarter, a version that no longer matches the docs, a status typo.
+ * makes: a duplicated milestone, a version that no longer matches the docs, a status typo.
  */
 
 describe('milestones', () => {
@@ -14,22 +14,31 @@ describe('milestones', () => {
     expect(MILESTONES.length).toBeGreaterThan(0);
   });
 
-  it.each(MILESTONES.map((m) => [`${m.year} ${m.quarter}`, m] as const))('%s is well formed', (_label, milestone) => {
+  it.each(MILESTONES.map((m) => [m.id, m] as const))('%s is well formed', (_label, milestone) => {
+    expect(milestone.id).not.toBe('');
     expect(milestone.quarter).toMatch(/^Q[1-4]$/);
     expect(milestone.year).toMatch(/^\d{4}$/);
     expect(Object.keys(STATUS_LABEL)).toContain(milestone.status);
   });
 
-  it('does not list the same quarter twice', () => {
-    const keys = MILESTONES.map((m) => `${m.year}-${m.quarter}`);
+  it('has unique milestone IDs even when a quarter has both a plan and a release', () => {
+    const keys = MILESTONES.map((m) => m.id);
     expect(new Set(keys).size).toBe(keys.length);
+    expect(MILESTONES.filter((m) => m.year === '2026' && m.quarter === 'Q4').map((m) => m.status)).toEqual([
+      'planned',
+      'released',
+    ]);
   });
 
   it('sorts newest first regardless of the order entries are written in', () => {
     const sorted = sortedMilestones();
     const rank = (m: { year: string; quarter: string }) => Number(m.year) * 10 + Number(m.quarter.slice(1));
+    const statusRank: Record<MilestoneStatus, number> = { planned: 2, 'in-progress': 1, released: 0 };
     for (let i = 1; i < sorted.length; i++) {
-      expect(rank(sorted[i - 1])).toBeGreaterThan(rank(sorted[i]));
+      expect(rank(sorted[i - 1])).toBeGreaterThanOrEqual(rank(sorted[i]));
+      if (rank(sorted[i - 1]) === rank(sorted[i])) {
+        expect(statusRank[sorted[i - 1].status]).toBeGreaterThanOrEqual(statusRank[sorted[i].status]);
+      }
     }
   });
 

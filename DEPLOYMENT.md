@@ -23,10 +23,10 @@ The deploy workflow passes exactly these two values. Do not derive them from
 from them 404s every asset behind the proxy and points canonical and Open Graph URLs at
 `github.io`.
 
-The consequence is that the artifact only renders correctly at `/tvmjs/`. Opening it
-directly at `https://tronweb3.github.io/tvmjs-site/` loads the HTML, but its assets and links
-point at `/tvmjs/…` on `github.io`, which does not exist. Check the site through the proxy
-(or `pnpm preview`), not on the `github.io` address.
+The consequence is that the artifact only renders correctly at `/tvmjs/`. Pages opened
+directly on `https://tronweb3.github.io/tvmjs-site/` are redirected by an inline script
+(`PAGES_URL`) to the same page on `SITE_URL`. Check the site through the proxy (or
+`pnpm preview`).
 
 The build downloads Inter and Wix Madefor Display from Google Fonts once (`next/font`) and
 bundles them; nothing is fetched from Google by visitors.
@@ -154,6 +154,8 @@ curl -sI https://walletadapter.org/tvmjs/_next/static/media/  # served through t
 - `curl -sI` responses must contain no `via`, `x-github-*`, `x-fastly-*` or `server: GitHub.com`
   headers, and `/tvmjs/_next/static/…` exactly one `cache-control`.
 - View the page's `<link rel="canonical">`: it must be `https://walletadapter.org/tvmjs`.
+- Open `https://tronweb3.github.io/tvmjs-site/roadmap.html` in a browser: it must land on
+  `https://walletadapter.org/tvmjs/roadmap.html`.
 
 `pnpm preview` serves `dist/` locally with the subset of these headers it can set
 (`nosniff`, `X-Frame-Options`, `Referrer-Policy`).

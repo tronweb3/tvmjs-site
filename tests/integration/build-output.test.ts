@@ -255,6 +255,57 @@ describe('security posture', () => {
     }
   });
 
+  describe('GitHub Pages redirect', () => {
+    const pagesUrl = process.env.PAGES_URL ?? 'https://tronweb3.github.io/tvmjs-site';
+    const siteUrl = (process.env.SITE_URL ?? 'https://walletadapter.org/tvmjs').replace(/\/+$/, '');
+
+    function redirectScript(page: string) {
+      const host = JSON.stringify(new URL(pagesUrl).hostname);
+      const head = read(page).split('</head>')[0];
+      const scripts = [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+      const found = scripts.find((match) => match[1].includes(host));
+      return found ? { code: found[1], index: found.index! } : null;
+    }
+
+    function run(code: string, href: string) {
+      const url = new URL(href);
+      let target: string | null = null;
+      const { hostname, pathname, search, hash } = url;
+      const replace = (to: string) => (target = to);
+      new Function('window', code)({ location: { hostname, pathname, search, hash, replace } });
+      return target;
+    }
+
+    it('is on every page, including 404.html, ahead of the clickjacking guard', () => {
+      if (!pagesUrl) return;
+      const offenders = allFiles()
+        .filter((file) => file.endsWith('.html'))
+        .filter((file) => {
+          const found = redirectScript(file);
+          return !found || found.index > read(file).indexOf('frame-guard.js');
+        });
+      expect(offenders).toEqual([]);
+    });
+
+    it.each(['index.html', 'docs/index.html', '404.html', 'docs/404.html'])(
+      'sends %s from the Pages origin to the same page on the public site',
+      (page) => {
+        if (!pagesUrl) return;
+        const { code } = redirectScript(page)!;
+        const pages = pagesUrl.replace(/\/+$/, '');
+        expect(run(code, `${pages}/docs/guide/introduction.html?x=1#y`)).toBe(
+          `${siteUrl}/docs/guide/introduction.html?x=1#y`
+        );
+        expect(run(code, `${siteUrl}/docs/`)).toBeNull();
+      }
+    );
+
+    it('is absent when PAGES_URL is empty', () => {
+      if (pagesUrl) return;
+      expect(read('index.html')).not.toContain('location.replace');
+    });
+  });
+
   it('allows images only from the site itself and data: URIs', () => {
     for (const page of ['index.html', 'docs/index.html']) {
       expect(directive(page, 'img-src')).toEqual(["'self'", 'data:']);

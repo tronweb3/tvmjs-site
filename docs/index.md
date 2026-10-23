@@ -23,7 +23,7 @@ features:
     link: /tron/overview
     linkText: See the differences
   - icon: 🧩
-    title: Eleven modular packages
+    title: Twelve modular packages
     details: Take the whole VM, or just the interpreter, the trie, the RLP codec or the address helpers. Install what you need and nothing else.
     link: /packages/
     linkText: Browse packages
@@ -39,9 +39,9 @@ features:
     linkText: Tracing and events
   - icon: 🤝
     title: java-tron parity
-    details: 1.1.0 aligned address derivation, energy forwarding, deployment limits and proposal gating with the reference client, and made failed executions roll back completely.
-    link: /releases/v1.1.0
-    linkText: What's new in 1.1.0
+    details: 1.2.0 introduces @tvmjs/client for local node simulation, aligns Energy pricing with java-tron, and decouples unsupported Ethereum mechanisms.
+    link: /releases/v1.2.0
+    linkText: What's new in 1.2.0
   - icon: 🧭
     title: Familiar from EthereumJS
     details: Forked from EthereumJS, so VM, StateManager, Common and the transaction APIs are the ones you already know — with every TRON difference written down.
@@ -80,18 +80,19 @@ console.log(res.executionGasUsed); // 3n
 ```
 
 `@tvmjs/tvm` is the interpreter and `@tvmjs/util` provides the byte helpers. Add
-[`@tvmjs/vm`](/packages/) when you move up to whole transactions and blocks.
+[`@tvmjs/vm`](/packages/) when you move up to whole transactions and blocks, or
+[`@tvmjs/client`](/packages/) for a local HTTP development node.
 
 Requires Node.js >= 20. Continue in [Getting Started](/guide/getting-started).
 
 ## Know the boundaries
 
-TVMJS is an execution library, not a node.
+TVMJS provides a local execution stack and an in-memory development node (`@tvmjs/client`).
 
-It does not implement consensus, it does not synchronise a chain, and its TRON chain presets carry
-chainId and local execution settings only. Results are not authoritative for on-chain outcomes —
-treat a difference from `java-tron` as a bug to report, and verify anything you rely on in
-production against the real network.
+It does not implement full network consensus or peer-to-peer block synchronisation with the live TRON
+network, and its chain presets carry chainId and local execution settings only. Results are not
+authoritative for on-chain outcomes — treat a difference from `java-tron` as a bug to report, and
+verify anything you rely on in production against the real network.
 
 The one difference to internalise first: a contract deployed without an explicit
 [root transaction ID](/tron/transaction-ids) gets a **different address** than it would on-chain.
@@ -102,7 +103,8 @@ The one difference to internalise first: a contract deployed without an explicit
 | --------------------------------------------------- | ---------------------------------------------------------- |
 | Run bytecode or a transaction                       | [Getting Started](/guide/getting-started)                  |
 | Understand TRON's execution rules                   | [TRON Semantics](/tron/overview)                           |
-| Pick a chain, hardfork or proposal                  | [Chain Configuration](/guide/chain-configuration)          |
+| Configure networks, proposals or EIPs               | [Chain Configuration](/guide/chain-configuration)          |
 | Choose between runCode / runCall / runTx / runBlock | [Executing Code](/guide/execution)                         |
 | Port code from EthereumJS                           | [Coming from EthereumJS](/guide/migrating-from-ethereumjs) |
+| Upgrade from 1.1.0                                  | [What's new in 1.2.0](/releases/v1.2.0)                    |
 | Upgrade from 1.0.0                                  | [What's new in 1.1.0](/releases/v1.1.0)                    |

@@ -17,21 +17,20 @@ The EVM package is called **`@tvmjs/tvm`**, and its factory is `createTVM()`.
 
 ## The default chain is TRON
 
-`createVM()` and `createTVM()` default to the execution-only `TronMainnet` configuration
-(chainId `728126428`, hardfork `tron`) rather than Ethereum Mainnet. Some Ethereum execution paths
-inherited from EthereumJS remain in this release. TVMJS is developed and tested for TRON execution,
-however, and does not guarantee Ethereum compatibility in future releases. For Ethereum execution,
-use upstream `@ethereumjs/vm`.
+`createVM()` and `createTVM()` require a TRON configuration and default to `TronMainnet`
+(chainId `728126428`, hardfork `tron`). TVMJS is developed exclusively for TRON execution. Starting in
+1.2.0, all inherited Ethereum execution configurations and hardforks are rejected at initialization.
+For Ethereum execution, use upstream `@ethereumjs/vm`.
 
 For TRON presets and network configuration, see [Chain Configuration](/guide/chain-configuration).
 
 ## Behaviour that differs under TRON rules
 
-Most TRON-specific behaviour (such as address derivation, EIP-150 energy forwarding, and contract
-size limits) is gated on the chain profile or hardfork. However, with default TVM parameters and
+TRON-specific behaviour (such as address derivation, TRON energy forwarding, and contract
+size limits) is built directly into the TRON execution profile. With default TVM parameters and
 the default precompile registry, TVM instances enforce a **call-depth limit of 64** across all
-built-in chain profiles (unless overridden via `params`), and TRON's precompiles (`0x03`, `0x09`,
-`0x0a`) remain active regardless of the selected chain (unless modified via `customPrecompiles`).
+TRON chain presets (unless overridden via `params`), and TRON's precompiles (`0x03`, `0x09`,
+`0x0a`) remain active.
 
 | Area                          | Ethereum protocol              | TRON                                               |
 | ----------------------------- | ------------------------------ | -------------------------------------------------- |
@@ -58,8 +57,13 @@ built-in chain profiles (unless overridden via `params`), and TRON's precompiles
 
 ## Removals
 
-- `KZG_POINT_EVALUATION` (EIP-4844) is disabled — not supported by TRON.
-- EIP-7480 (EOF data section access) is removed from the supported list.
+- **Ethereum execution configurations and presets**: Setting Ethereum chain profiles or passing `hardfork: 'tron'` with Ethereum Mainnet is rejected at initialization.
+- **EIP-2929 warm/cold storage pricing**: Removed; all execution is metered using native TRON Energy rules.
+- **EIP-7702 (Set Code Transaction)**: Authorization processing and delegated sender rules are removed.
+- **EIP-4788 (Beacon Block Root)**: Beacon root contract initialization and ring-buffer storage are removed.
+- **Blob transactions (EIP-4844 Type 0x03)**: Blob gas calculations, blob fees, and `KZG_POINT_EVALUATION` are removed.
+- **EIP-7480 (EOF data section access)**: Removed from the supported list.
+- **EIP-170 / EIP-3860 code size configuration options**: Removed from TVM options; deployment constraints follow `java-tron` directly.
 
 ## Upstream credit
 

@@ -24,6 +24,63 @@ export function NpmPackage({ name }: { name: string }) {
 
 export const ANNOUNCEMENTS: AnnouncementItem[] = [
   {
+    time: 'October 14, 2026',
+    title: 'TVMJS 1.2.0 — TRON client, energy alignment and execution profiles',
+    version: '1.2.0',
+    content: (
+      <p>
+        Introduces <NpmPackage name="@tvmjs/client" /> for local TRON development node simulation, aligns Energy and
+        storage pricing with java-tron by removing Ethereum EIP-2929 warm/cold access costs, decouples unsupported
+        Ethereum mechanisms into standalone TRON execution profiles, and preserves 64-bit TRC-10 token ID precision.
+      </p>
+    ),
+    detailContent: `
+## What's in 1.2.0
+
+1.2.0 introduces \`@tvmjs/client\`, a standalone in-memory TRON development node that serves the TRON HTTP REST API (\`/wallet/*\`), advances Energy and state alignment with \`java-tron\` for implemented execution paths by removing Ethereum's EIP-2929 warm/cold storage pricing, establishes independent TRON execution profiles by removing unsupported Ethereum legacy mechanisms, preserves 64-bit TRC-10 token ID precision, and delivers an experimental \`java-tron\` RPC client PoC.
+
+## Local TRON development node (\`@tvmjs/client\`)
+
+\`@tvmjs/client\` provides a local TRON development node with pre-funded accounts, immediate and interval mining, and the standard TRON HTTP REST API:
+
+\`\`\`bash
+# Option A: Install locally in your project
+npm install --save-dev @tvmjs/client
+npx tvmjs
+
+# Option B: Run directly via npx without local install
+npx --package=@tvmjs/client tvmjs
+\`\`\`
+
+The client listens at \`http://127.0.0.1:9090\` by default. You can query the head block via curl:
+
+\`\`\`bash
+curl http://127.0.0.1:9090/wallet/getnowblock
+\`\`\`
+
+Or embed \`TronNode\` and \`TronProvider\` directly into JavaScript and TypeScript test suites.
+
+## Breaking changes
+
+- **Warm/cold storage access pricing removed.** EIP-2929 pricing has been removed; account access, storage operations (\`SLOAD\`/\`SSTORE\`), \`CALL\`/\`CALLTOKEN\`, \`SELFDESTRUCT\` and refund behavior now align with \`java-tron\` Energy rules for implemented execution paths and verified scenarios (dynamic penalties, version-1 contracts and full on-chain resource models remain outside local simulation). Access lists remain diagnostic metadata and do not alter execution costs.
+- **Unsupported Ethereum features removed.** EIP-7702 authorization processing and delegated senders, EIP-4788 Beacon root processing, Blob transactions (Type \`0x03\`), and contract size options (\`allowUnlimitedContractSize\`, \`allowUnlimitedInitCodeSize\`) have been removed. \`generateTxReceipt()\` now takes four arguments.
+- **Standalone TRON execution profiles.** \`TronMainnet\`, \`TronNile\` and \`TronShasta\` presets are pure TRON execution profiles without Ethereum hardfork scheduling or block reward defaults. Conflicting \`Common\` settings across \`VM\` and \`TVM\` initialization and Ethereum configurations (including legacy \`new Common({ chain: Mainnet, hardfork: 'tron' })\`) are strictly rejected.
+
+## TRC-10 token ID precision
+
+TRC-10 token IDs now retain full 64-bit precision (\`bigint\`) across transactions, account balances, serialization and state management, preventing collisions above JavaScript's safe-integer range (\`Number.MAX_SAFE_INTEGER\`).
+
+## Tested java-tron parity
+
+- 71 measured \`java-tron\` execution cases verified with signed local transactions across both StateManagers.
+- Obsolete Ethereum fixture runners and execution-spec submodules retired in favor of pinned TRON Solidity fixtures.
+
+## Packages
+
+\`@tvmjs/client\` is 1.0.0. \`@tvmjs/binarytree\`, \`@tvmjs/block\`, \`@tvmjs/blockchain\`, \`@tvmjs/common\`, \`@tvmjs/statemanager\`, \`@tvmjs/tvm\`, \`@tvmjs/tx\`, \`@tvmjs/util\` and \`@tvmjs/vm\` move to 1.2.0. \`@tvmjs/mpt\` is 1.0.2. \`@tvmjs/rlp\` remains 1.0.0.
+`,
+  },
+  {
     time: 'September 10, 2026',
     title: 'TVMJS 1.1.0 — java-tron execution parity',
     version: '1.1.0',

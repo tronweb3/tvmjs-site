@@ -65,7 +65,7 @@ const tvm = await createTVM({
 ::: tip One Common, everywhere
 When you supply a custom TVM or `tvmOpts` to `createVM()`, the VM keeps its `Common`, `StateManager`
 and exposed blockchain instances consistent with the TVM's. Mixing instances is the most common
-source of confusing chainId and hardfork mismatches.
+source of confusing chainId, network preset, or proposal mismatches.
 :::
 
 ## Tries

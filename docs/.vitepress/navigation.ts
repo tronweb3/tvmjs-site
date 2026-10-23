@@ -86,7 +86,10 @@ export const SIDEBAR: SidebarGroup[] = [
 ];
 
 /** Release notes, newest first. Each entry must have a matching `releases/vX.Y.Z.md`. */
-export const RELEASES: NavLink[] = [{ text: 'v1.1.0', link: '/releases/v1.1.0' }];
+export const RELEASES: NavLink[] = [
+  { text: 'v1.2.0', link: '/releases/v1.2.0' },
+  { text: 'v1.1.0', link: '/releases/v1.1.0' },
+];
 
 /** The sidebar as VitePress consumes it: the static groups plus the release list. */
 export const SIDEBAR_WITH_RELEASES: SidebarGroup[] = [...SIDEBAR, { text: 'Releases', items: RELEASES }];

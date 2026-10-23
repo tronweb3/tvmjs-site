@@ -39,6 +39,7 @@ jobs:
         env:
           BASE_PATH: /tvmjs
           SITE_URL: https://walletadapter.org/tvmjs
+          PAGES_URL: https://tronweb3.github.io/tvmjs-site
           # Repository or organisation variable (not a secret — the ID is public in the page
           # HTML). Unset means no analytics.
           NEXT_PUBLIC_GA_ID: ${{ vars.NEXT_PUBLIC_GA_ID }}

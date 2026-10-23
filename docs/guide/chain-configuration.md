@@ -1,7 +1,7 @@
 # Chain Configuration
 
-`@tvmjs/common` decides which rules the VM executes under: which chain, which hardfork, which EIPs
-and TIPs, and which TRON network proposals are active.
+`@tvmjs/common` decides which rules the VM executes under: which TRON network preset, which active
+network proposals, and which explicit EIPs and TIPs are enabled (with the hardfork fixed to `'tron'`).
 
 ## The default is TRON
 
@@ -15,16 +15,18 @@ import { createVM } from '@tvmjs/vm';
 const vm = await createVM();
 ```
 
-TVMJS targets TRON execution. This release retains some Ethereum execution paths inherited from
-EthereumJS, but they are not a long-term compatibility target and may change or be removed in a
-future release. For Ethereum execution, use upstream `@ethereumjs/vm`. See
-[Migrating from EthereumJS](/guide/migrating-from-ethereumjs) for behavioural differences.
+TVMJS targets TRON execution exclusively. Starting with 1.2.0, inherited Ethereum execution configurations
+and legacy normalisation paths are no longer supported. For Ethereum execution, use upstream `@ethereumjs/vm`.
+See [Migrating from EthereumJS](/guide/migrating-from-ethereumjs) for behavioural differences.
 
-::: warning This changed in 1.1.0
-In 1.0.0 the default was chainId 1 combined with the TRON hardfork. `new Common({ chain: Mainnet })`
-no longer reproduces that — it is now plain Ethereum Mainnet. The legacy explicit form
-`new Common({ chain: Mainnet, hardfork: 'tron' })` is still accepted and normalised to `TronMainnet`,
-but new code should name `TronMainnet` directly. See [v1.1.0](/releases/v1.1.0).
+::: danger Breaking change in 1.2.0
+TVMJS 1.2.0 establishes independent TRON execution profiles. Any Ethereum configuration (such as
+`new Common({ chain: Mainnet })`) as well as legacy combinations like
+`new Common({ chain: Mainnet, hardfork: 'tron' })` are strictly rejected with an exception during
+initialization.
+
+Code targeting TRON must use the TRON chain presets (`TronMainnet`, `TronNile`, `TronShasta`) or
+`createTronChainIdCommon()`. See [v1.2.0](/releases/v1.2.0).
 :::
 
 ## TRON chain presets
@@ -50,8 +52,8 @@ const common = createTronChainIdCommon('nile');
 ```
 
 ::: danger Execution-only presets
-These presets provide chainId and local execution settings **only**. They inherit unverified genesis,
-consensus and hardfork data from the Mainnet execution baseline, and contain no peer-discovery data.
+These presets provide chainId and local execution settings **only**, without inherited Ethereum consensus
+or block reward defaults, and contain no peer-discovery data.
 
 Use them for `Common.chainId()`, the `CHAINID` opcode and controlled local execution. Do **not** use
 them for TRON genesis validation, consensus or block validation, chain synchronisation, or P2P
@@ -60,8 +62,8 @@ discovery.
 
 ## Detecting TRON behaviour
 
-Some TRON behaviour is chain-level rather than hardfork-level, and must stay active even when a TRON
-preset selects an earlier hardfork. `Common.isTron()` reports that:
+`Common.isTron()` reports whether execution is running under TRON execution rules (address derivation,
+energy forwarding, lifted size limits, and TRON precompiles):
 
 ```ts
 if (common.isTron()) {
@@ -77,34 +79,40 @@ with `activatedProposals`:
 ```ts
 import { Common, TronMainnet } from '@tvmjs/common';
 
+// TRON presets enable Proposal 65 by default (memory opcode energy alignment).
+// Include 65 when supplying custom activatedProposals to preserve default memory pricing.
 const common = new Common({
   chain: TronMainnet,
-  activatedProposals: [95, 96],
+  activatedProposals: [65, 95, 96],
 });
 
 common.isActivatedProposal(96); // true
-common.activatedProposals(); // [95, 96]
+common.activatedProposals(); // [65, 95, 96]
 ```
 
-| Proposal | Name               | Effect in TVMJS                                                                                             |
-| -------- | ------------------ | ----------------------------------------------------------------------------------------------------------- |
-| 95       | `ALLOW_TVM_PRAGUE` | Gates Prague-era behaviour on TRON                                                                          |
-| 96       | `ALLOW_TVM_OSAKA`  | Gates Osaka-era behaviour, including the TIP-854 strict calldata rules on the `0x09` and `0x0a` precompiles |
+| Proposal | Name               | Effect in TVMJS                                                                                                                               |
+| -------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 65       | —                  | Enabled by default in TRON presets; aligns `MLOAD`, `MSTORE`, and `MSTORE8` Energy costs                                                      |
+| 95       | `ALLOW_TVM_PRAGUE` | Recognized proposal flag; execution gating is not yet connected in the current release                                                        |
+| 96       | `ALLOW_TVM_OSAKA`  | Gates TIP-854 strict calldata validation and full energy consumption on the `0x09` and `0x0a` precompiles (CLZ still requires `eips: [7939]`) |
 
-IDs are validated, de-duplicated and stored ascending. `Common` does **not** mutate EIPs or params
-from proposal state on its own — it exposes the flags, and execution consumers use them as feature
-gates.
+IDs are validated, de-duplicated and stored ascending. TRON chain presets include Proposal 65 by default.
+When overriding `activatedProposals`, remember to include `65` to retain preset memory instruction pricing.
+`Common` does **not** mutate EIPs or params from proposal state on its own — it exposes the flags, and
+execution consumers use them as feature gates (for example, enabling `CLZ` opcode support still requires
+explicit `eips: [7939]`).
 
-## Hardforks and TIPs
+## TIPs and explicit EIPs
 
-TVMJS carries a TRON-specific EIP dictionary (`tipsDict`) alongside the upstream `eipsDict`.
-`Common.setEIPs()` and `paramByEIP()` reference it. Individual TIPs can be enabled explicitly:
+Execution runs under the fixed `'tron'` hardfork. TVMJS carries a TRON-specific dictionary (`tipsDict`)
+alongside `eipsDict`. `Common.setEIPs()` and `paramByEIP()` reference it. Individual TIPs and EIPs can
+be enabled explicitly:
 
 ```ts
 const common = new Common({ chain: TronMainnet, eips: [7939] }); // CLZ opcode
 ```
 
-For the full hardfork and EIP tables, see the
+For the full EIP and TIP tables, see the
 [`@tvmjs/common` README](https://github.com/tronweb3/tvmjs-monorepo/tree/master/packages/common).
 
 ## Custom cryptography
