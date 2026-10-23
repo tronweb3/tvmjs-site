@@ -37,10 +37,22 @@ overrides:
   # drop this once VitePress ships typings built against markdown-it 14.2.
   '@types/markdown-it': '14.1.2'
 
-  # Past published advisories; drop once the direct dependencies pull these in themselves.
-  # @tailwindcss/typography 0.5.x still pins postcss-selector-parser 6.0.10.
-  brace-expansion@1: '1.1.21'
-  brace-expansion@5: '5.0.12'
-  source-map-js: '1.2.2'
-  postcss-selector-parser: '7.1.6'
-  sharp: '0.35.5'
+  # ReDoS / stack-exhaustion advisories in minimatch's brace expansion, pulled in by
+  # eslint (1.x line) and typescript-eslint (5.x line). Patch bumps within each major.
+  'brace-expansion@^1': '1.1.21'
+  'brace-expansion@^5': '5.0.12'
+
+  # postcss (under vite) still resolves the vulnerable source-map-js 1.2.1.
+  'source-map-js': '1.2.2'
+
+  # @tailwindcss/typography 0.5.20 hard-pins postcss-selector-parser 6.0.10; the
+  # quadratic-parse fix only exists in 7.1.6+. 7.x dropped old Node versions but kept
+  # the API typography uses. Drop this once typography moves to 7.x itself.
+  '@tailwindcss/typography>postcss-selector-parser': '7.1.7'
+
+  # @next/eslint-plugin-next (every release through 16.5 canary) pins fast-glob 3.3.1,
+  # whose micromatch -> braces <=3.0.3 has a stack-exhaustion advisory with no patched
+  # braces release. The plugin only calls `globSync(pattern, { onlyDirectories: true })`
+  # (utils/get-root-dirs.js), which tinyglobby implements with the same signature and
+  # no braces dependency. Drop this once the plugin moves off fast-glob.
+  '@next/eslint-plugin-next>fast-glob': 'npm:tinyglobby@0.2.17'
